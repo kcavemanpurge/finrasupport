@@ -1,0 +1,17 @@
+{
+  "name": "frontend-backend-links",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@netlify/database": "^1.1.0",
+    "cors": "^2.8.5",
+    "drizzle-orm": "beta",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "drizzle-kit": "beta"
+  }
+}

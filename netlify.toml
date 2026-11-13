@@ -1,0 +1,24 @@
+plugins = []
+headers = []
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin.html"
+  status = 200
+
+[database]
+
+  [database.migrations]
+  path = "netlify/database/migrations"
+
+[build]
+publish = "public"
+publishOrigin = "config"
+
+[server]
+path = "/api/*"

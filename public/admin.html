@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primero Srv LLC | Sovereign Admin Chat Console & Message Logs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primero-navy: #002b49;
+            --primero-navy-dark: #001b2f;
+            --primero-blue: #004b7c;
+            --primero-accent: #0076c0;
+            --primero-accent-light: #38bdf8;
+            --primero-cyan: #0284c7;
+            --primero-gold: #f59e0b;
+            --primero-gold-light: #fef3c7;
+            --primero-emerald: #10b981;
+            --primero-dark: #0f172a;
+            --primero-light: #f8fafc;
+            --primero-border: #cbd5e1;
+            --primero-border-dark: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+        body {
+            background-color: #0b1322;
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        .admin-topbar {
+            background: var(--primero-navy-dark);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 0.75rem 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .brand-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid var(--primero-accent-light);
+            color: var(--primero-accent-light);
+            padding: 2px 7px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .daemon-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: #94a3b8;
+        }
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primero-emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--primero-emerald);
+            animation: pulse 1.8s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-top {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #f1f5f9;
+            padding: 0.45rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .btn-top:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: var(--primero-accent-light);
+            color: #ffffff;
+        }
+        .btn-top.active-auto {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--primero-emerald);
+            color: #34d399;
+        }
+
+        /* Direct Platform Portal Links */
+        .header-portal-strip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .portal-strip-label {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 2px;
+        }
+        .portal-nav-pill {
+            font-size: 0.76rem;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1;
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .portal-nav-pill:hover {
+            color: #ffffff;
+            border-color: var(--primero-accent-light);
+            background: rgba(56, 189, 248, 0.2);
+            transform: translateY(-1px);
+        }
+        .portal-nav-pill.active {
+            background: var(--primero-cyan);
+            color: #ffffff;
+            border-color: var(--primero-accent-light);
+            box-shadow: 0 1px 6px rgba(2, 132, 199, 0.4);
+        }
+        .portal-nav-pill.highlight {
+            border-color: rgba(56, 189, 248, 0.45);
+            color: var(--primero-accent-light);
+            background: rgba(56, 189, 248, 0.14);
+        }
+        .sovereign-admin-link {
+            font-size: 0.74rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px dashed rgba(56, 189, 248, 0.45);
+            transition: all 0.15s ease;
+        }
+        .sovereign-admin-link:hover {
+            background: rgba(56, 189, 248, 0.25);
+            color: #ffffff;
+            border-style: solid;
+        }
+
+        /* Main Workspace Layout */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            flex: 1;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+        @media (max-width: 900px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+                overflow: visible;
+            }
+        }
+
+        /* Left Column: Threads Navigation */
+        .threads-sidebar {
+            background: #0f1b2e;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.15);
+        }
+        .sidebar-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .sidebar-title {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .thread-counter {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--primero-accent-light);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.8rem;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .search-box input:focus {
+            border-color: var(--primero-accent-light);
+        }
+
+        .filter-tabs {
+            display: flex;
+            padding: 0.5rem 1rem;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        .tab-btn:hover { color: #fff; }
+        .tab-btn.active {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--primero-accent-light);
+        }
+
+        .threads-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .thread-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 8px;
+            padding: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+        }
+        .thread-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateX(2px);
+        }
+        .thread-card.selected {
+            background: rgba(56, 189, 248, 0.12);
+            border-color: var(--primero-accent-light);
+            box-shadow: inset 3px 0 0 var(--primero-accent-light);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+        .client-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+        .thread-time {
+            font-size: 0.68rem;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .client-id-sub {
+            font-size: 0.7rem;
+            color: #64748b;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 6px;
+        }
+        .last-msg-preview {
+            font-size: 0.77rem;
+            color: #cbd5e1;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-pill {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .status-waiting {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            animation: pulse-border 1.5s infinite;
+        }
+        .status-active {
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+        .status-resolved {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        @keyframes pulse-border {
+            0% { border-color: rgba(239, 68, 68, 0.3); }
+            50% { border-color: rgba(239, 68, 68, 0.9); }
+            100% { border-color: rgba(239, 68, 68, 0.3); }
+        }
+
+        .meta-pills {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mode-pill {
+            font-size: 0.65rem;
+            background: rgba(255, 255, 255, 0.06);
+            color: #94a3b8;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .count-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: #cbd5e1;
+        }
+
+        /* Right Column: Chat Inspector & Dispatcher */
+        .chat-inspector {
+            display: flex;
+            flex-direction: column;
+            background: #0b1322;
+            height: 100%;
+            overflow: hidden;
+        }
+        .inspector-header {
+            background: #111e33;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.9rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .inspector-title-col h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .inspector-title-col span {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: radial-gradient(circle at top right, rgba(0, 43, 73, 0.3), transparent 60%);
+        }
+
+        .chat-bubble-row {
+            display: flex;
+            flex-direction: column;
+            max-width: 78%;
+        }
+        .chat-bubble-row.from-user {
+            align-self: flex-start;
+        }
+        .chat-bubble-row.from-bot {
+            align-self: flex-start;
+        }
+        .chat-bubble-row.from-admin {
+            align-self: flex-end;
+        }
+
+        .bubble-meta {
+            font-size: 0.68rem;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .from-user .bubble-meta { color: #94a3b8; }
+        .from-bot .bubble-meta { color: #f59e0b; }
+        .from-admin .bubble-meta { color: var(--primero-accent-light); justify-content: flex-end; }
+
+        .bubble-content {
+            padding: 0.85rem 1.15rem;
+            border-radius: 10px;
+            font-size: 0.86rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .from-user .bubble-content {
+            background: #1e293b;
+            color: #f1f5f9;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top-left-radius: 2px;
+        }
+        .from-bot .bubble-content {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            color: #fef3c7;
+            border-top-left-radius: 2px;
+        }
+        .from-admin .bubble-content {
+            background: linear-gradient(135deg, #0284c7 0%, #004b7c 100%);
+            color: #ffffff;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            border-top-right-radius: 2px;
+        }
+
+        /* Reply Composer */
+        .reply-composer-area {
+            background: #111e33;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .preset-replies-strip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .preset-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.12s;
+        }
+        .preset-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+            color: #fff;
+            border-color: var(--primero-accent-light);
+        }
+
+        .composer-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .composer-input-row textarea {
+            flex: 1;
+            background: #080f1a;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: #fff;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            min-height: 52px;
+            max-height: 120px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .composer-input-row textarea:focus {
+            border-color: var(--primero-accent-light);
+        }
+        .btn-dispatch {
+            background: linear-gradient(135deg, #0284c7 0%, #005f9e 100%);
+            color: #ffffff;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            padding: 0.85rem 1.4rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.84rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .btn-dispatch:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+        .btn-dispatch:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .notification-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            font-size: 0.84rem;
+            font-weight: 600;
+            display: none;
+            z-index: 99999;
+            animation: slideIn 0.2s ease-out;
+        }
+        @keyframes slideIn { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .empty-placeholder {
+            margin: auto;
+            text-align: center;
+            color: #64748b;
+            padding: 2rem;
+        }
+        .empty-placeholder h3 {
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Admin Bar -->
+    <header class="admin-topbar">
+        <div class="topbar-left">
+            <a href="/" style="text-decoration: none;" class="brand-title">
+                Primero Srv LLC
+            </a>
+            <span class="brand-tag">Sovereign Chat Logs Daemon</span>
+            <div class="daemon-status">
+                <span class="pulse-dot"></span>
+                <span id="daemonStatusText">ONLINE // US-EAST-2</span>
+            </div>
+        </div>
+        <div class="header-portal-strip">
+            <span class="portal-strip-label">Direct Portals:</span>
+            <a href="https://frontend-backend-links.netlify.app/" target="_blank" rel="noopener noreferrer" class="portal-nav-pill" id="adminHdrLinkFrontend" title="Live Website Domain">
+                <span class="pill-icon">🌐</span> Website Domain (frontend-backend-links.netlify.app)
+            </a>
+            <a href="/admin" class="portal-nav-pill highlight active" id="adminHdrLinkBackend" title="Admin Live Agent Chat Backend Terminal">
+                <span class="pill-icon">🛡️</span> Admin Live Agent Chat Backend Terminal
+            </a>
+            <a href="/admin" class="sovereign-admin-link" id="adminHdrLinkSovereign" title="Sovereign Admin Console">
+                🛡️ Sovereign Admin Console
+            </a>
+        </div>
+        <div class="topbar-actions">
+            <button class="btn-top" id="toggleTerminalBtn" onclick="toggleAdminTerminal()">
+                <span>>_ Live Backend Terminal</span>
+            </button>
+            <button class="btn-top active-auto" id="autoPollBtn" onclick="toggleAutoPoll()">
+                <span>⚡ Auto-Sync: ON (3s)</span>
+            </button>
+            <button class="btn-top" onclick="fetchThreads(true)">
+                <span>↻ Refresh</span>
+            </button>
+            <a href="https://frontend-backend-links.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-top" title="Live Website Domain">
+                <span>↗ Live Domain</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Workspace Main Grid -->
+    <main class="workspace-grid">
+        
+        <!-- Left: Threads Sidebar -->
+        <aside class="threads-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title-row">
+                    <span class="sidebar-title">Active Inquiries</span>
+                    <span class="thread-counter" id="threadCountBadge">0 Threads</span>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Filter by client name, ID, or text..." oninput="filterThreads()">
+                </div>
+            </div>
+
+            <div class="filter-tabs">
+                <button class="tab-btn active" onclick="setTab('all', this)">All</button>
+                <button class="tab-btn" onclick="setTab('waiting_specialist', this)">Needs Specialist</button>
+                <button class="tab-btn" onclick="setTab('active', this)">Active</button>
+                <button class="tab-btn" onclick="setTab('resolved', this)">Resolved</button>
+            </div>
+
+            <div class="threads-list" id="threadsContainer">
+                <div class="empty-placeholder">
+                    <p>Loading active customer threads...</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right: Message Logs Inspector & Reply Dispatcher -->
+        <section class="chat-inspector">
+            <div class="inspector-header">
+                <div class="inspector-title-col">
+                    <h2 id="inspectClientName">Select a thread from the sidebar</h2>
+                    <span id="inspectClientId">Session: --</span>
+                </div>
+                <div id="inspectorMetaActions" style="display: none; align-items: center; gap: 8px;">
+                    <span class="status-pill status-active" id="inspectStatusPill">ACTIVE</span>
+                    <button class="btn-top" onclick="loadThreadMessages(selectedClientId)">↻ Refresh Log</button>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="empty-placeholder">
+                    <h3>No Thread Selected</h3>
+                    <p>Click on any customer thread in the left panel to inspect message logs and dispatch live replies.</p>
+                </div>
+            </div>
+
+            <div class="reply-composer-area" id="replyComposerArea" style="display: none;">
+                <div class="preset-replies-strip">
+                    <span style="font-size: 0.68rem; color: #64748b; text-transform: uppercase;">Templates:</span>
+                    <button class="preset-btn" onclick="applyPreset('Our advisory desk is reviewing your CA root certificate specifications.')">CA Specs</button>
+                    <button class="preset-btn" onclick="applyPreset('Connecting your firm directly with our introducing broker-dealer clearing team.')">Broker Routing</button>
+                    <button class="preset-btn" onclick="applyPreset('Please verify your CRD number and regulatory filing jurisdiction.')">CRD Check</button>
+                    <button class="preset-btn" onclick="applyPreset('A formal inquiry packet has been logged for your compliance officer.')">Compliance Log</button>
+                </div>
+                <div class="composer-input-row">
+                    <textarea id="replyTextInput" placeholder="Type reply from Admin console down to client widget (Ctrl+Enter to send)..." onkeydown="handleReplyKey(event)"></textarea>
+                    <button class="btn-dispatch" id="sendReplyBtn" onclick="dispatchAdminReply()">
+                        <span>Send Reply ➔</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Notification Toast -->
+    <div class="notification-toast" id="toast">Admin reply dispatched successfully</div>
+
+    <script>
+        let allThreads = [];
+        let selectedClientId = null;
+        let currentTab = 'all';
+        let autoPollTimer = null;
+        let isAutoPoll = true;
+
+        // --- 1. Fetch Threads ---
+        async function fetchThreads(showFeedback = false) {
+            try {
+                const res = await fetch('/api/admin/threads');
+                if (!res.ok) throw new Error('Daemon status: ' + res.status);
+                const data = await res.json();
+                
+                if (data.status === 'success' && Array.isArray(data.threads)) {
+                    allThreads = data.threads;
+                    renderThreadsList();
+                    if (selectedClientId) {
+                        loadThreadMessages(selectedClientId, false);
+                    }
+                    if (showFeedback) showToast('Refreshed active threads');
+                }
+            } catch (err) {
+                console.error('Failed to fetch threads:', err);
+                document.getElementById('daemonStatusText').innerText = 'DAEMON RECONNECTING...';
+            }
+        }
+
+        // --- 2. Render Threads List ---
+        function renderThreadsList() {
+            const container = document.getElementById('threadsContainer');
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            let filtered = allThreads.filter(t => {
+                const matchesTab = (currentTab === 'all') || (t.status === currentTab);
+                const matchesSearch = !search || 
+                    (t.clientName || '').toLowerCase().includes(search) || 
+                    (t.id || '').toLowerCase().includes(search) || 
+                    (t.lastMessageText || '').toLowerCase().includes(search);
+                return matchesTab && matchesSearch;
+            });
+
+            document.getElementById('threadCountBadge').innerText = `${filtered.length} Threads`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-placeholder">
+                        <p>No chat threads matching current filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(t => {
+                const isSelected = (t.id === selectedClientId) ? 'selected' : '';
+                const timeAgo = formatTimeAgo(t.lastUpdated);
+                const statusClass = t.status === 'waiting_specialist' ? 'status-waiting' : (t.status === 'resolved' ? 'status-resolved' : 'status-active');
+                const statusLabel = t.status === 'waiting_specialist' ? 'SPECIALIST NEEDED' : t.status.toUpperCase();
+
+                return `
+                    <div class="thread-card ${isSelected}" onclick="selectThread('${t.id}')">
+                        <div class="card-top">
+                            <span class="client-name">${escapeHtml(t.clientName || 'Visitor')}</span>
+                            <span class="thread-time">${timeAgo}</span>
+                        </div>
+                        <div class="client-id-sub">ID: ${escapeHtml(t.id)}</div>
+                        <div class="last-msg-preview">${escapeHtml(t.lastMessageText || 'No messages logged')}</div>
+                        <div class="card-bottom">
+                            <span class="status-pill ${statusClass}">${statusLabel}</span>
+                            <div class="meta-pills">
+                                <span class="mode-pill">${t.mode === 'specialist' ? '👤 Specialist' : '🤖 Bot'}</span>
+                                <span class="count-pill">${t.messageCount || 0} msgs</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- 3. Select Thread & Load Messages ---
+        async function selectThread(clientId) {
+            selectedClientId = clientId;
+            renderThreadsList(); // Update selected card styling
+
+            const thread = allThreads.find(t => t.id === clientId);
+            if (thread) {
+                document.getElementById('inspectClientName').innerText = thread.clientName || 'Visitor';
+                document.getElementById('inspectClientId').innerText = `Session ID: ${thread.id} // Created: ${new Date(thread.createdAt).toLocaleString()}`;
+                
+                const pill = document.getElementById('inspectStatusPill');
+                pill.className = 'status-pill ' + (thread.status === 'waiting_specialist' ? 'status-waiting' : (thread.status === 'resolved' ? 'status-resolved' : 'status-active'));
+                pill.innerText = thread.status === 'waiting_specialist' ? 'SPECIALIST NEEDED' : thread.status.toUpperCase();
+                
+                document.getElementById('inspectorMetaActions').style.display = 'flex';
+                document.getElementById('replyComposerArea').style.display = 'flex';
+            }
+
+            await loadThreadMessages(clientId, true);
+            document.getElementById('replyTextInput').focus();
+        }
+
+        async function loadThreadMessages(clientId, scrollToBottom = true) {
+            if (!clientId) return;
+            try {
+                const res = await fetch(`/api/admin/thread/${encodeURIComponent(clientId)}`);
+                if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+                const data = await res.json();
+
+                if (data.status === 'success' && Array.isArray(data.messages)) {
+                    renderMessages(data.messages, scrollToBottom);
+                }
+            } catch (err) {
+                console.error('Error loading thread messages:', err);
+            }
+        }
+
+        function renderMessages(messages, scrollToBottom = true) {
+            const container = document.getElementById('messagesContainer');
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-placeholder">
+                        <p>No messages in this customer thread yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = messages.map(m => {
+                let senderClass = 'from-user';
+                let senderLabel = 'Customer / Visitor';
+                if (m.sender === 'admin') {
+                    senderClass = 'from-admin';
+                    senderLabel = '🛡️ Sovereign Admin Specialist';
+                } else if (m.sender === 'bot') {
+                    senderClass = 'from-bot';
+                    senderLabel = '🤖 Primero Virtual Concierge';
+                }
+
+                const timeStr = new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                return `
+                    <div class="chat-bubble-row ${senderClass}">
+                        <div class="bubble-meta">
+                            <span>${senderLabel}</span>
+                            <span>•</span>
+                            <span>${timeStr}</span>
+                        </div>
+                        <div class="bubble-content">${escapeHtml(m.text)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            if (scrollToBottom) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // --- 4. Dispatch Admin Reply (POST /api/admin/reply) ---
+        async function dispatchAdminReply() {
+            if (!selectedClientId) return;
+            const input = document.getElementById('replyTextInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const sendBtn = document.getElementById('sendReplyBtn');
+            sendBtn.disabled = true;
+            sendBtn.innerText = 'Dispatching...';
+
+            try {
+                const res = await fetch('/api/admin/reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        clientId: selectedClientId,
+                        text: text
+                    })
+                });
+
+                const data = await res.json();
+                if (data.status === 'success') {
+                    input.value = '';
+                    showToast('Admin reply dispatched down to client widget');
+                    await loadThreadMessages(selectedClientId, true);
+                    await fetchThreads();
+                } else {
+                    alert('Error dispatching reply: ' + (data.message || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('Failed to post reply:', err);
+                alert('Connection error: ' + err.message);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<span>Send Reply ➔</span>';
+            }
+        }
+
+        function handleReplyKey(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                dispatchAdminReply();
+            }
+        }
+
+        function applyPreset(text) {
+            const input = document.getElementById('replyTextInput');
+            input.value = text;
+            input.focus();
+        }
+
+        // --- Filters & Controls ---
+        function setTab(tab, btn) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderThreadsList();
+        }
+
+        function filterThreads() {
+            renderThreadsList();
+        }
+
+        function toggleAutoPoll() {
+            isAutoPoll = !isAutoPoll;
+            const btn = document.getElementById('autoPollBtn');
+            if (isAutoPoll) {
+                btn.classList.add('active-auto');
+                btn.innerHTML = '<span>⚡ Auto-Sync: ON (3s)</span>';
+                startAutoPoll();
+            } else {
+                btn.classList.remove('active-auto');
+                btn.innerHTML = '<span>Auto-Sync: PAUSED</span>';
+                if (autoPollTimer) clearInterval(autoPollTimer);
+            }
+        }
+
+        function startAutoPoll() {
+            if (autoPollTimer) clearInterval(autoPollTimer);
+            autoPollTimer = setInterval(() => {
+                fetchThreads();
+            }, 3000);
+        }
+
+        function showToast(text) {
+            const t = document.getElementById('toast');
+            t.innerText = text;
+            t.style.display = 'block';
+            setTimeout(() => {
+                t.style.display = 'none';
+            }, 2500);
+        }
+
+        function formatTimeAgo(dateStr) {
+            if (!dateStr) return '';
+            const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+            if (diff < 60) return 'just now';
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+            return `${Math.floor(diff / 86400)}d ago`;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Init on load
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchThreads();
+            startAutoPoll();
+            if (window.location.hash === '#terminal') {
+                setTimeout(toggleAdminTerminal, 300);
+            }
+        });
+
+        // --- Backend Terminal REPL for Admin ---
+        function toggleAdminTerminal() {
+            const overlay = document.getElementById('adminTerminalOverlay');
+            overlay.style.display = (overlay.style.display === 'flex') ? 'none' : 'flex';
+            if (overlay.style.display === 'flex') {
+                document.getElementById('adminTermInput').focus();
+            }
+        }
+
+        function handleAdminTermPress(e) {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('adminTermInput');
+                const cmd = input.value.trim();
+                if (!cmd) return;
+                appendAdminTermLine(`admin@sovereign-daemon:~$ ${cmd}`, '#38bdf8');
+                processAdminTermCommand(cmd);
+                input.value = '';
+            }
+        }
+
+        function appendAdminTermLine(text, color = '#10b981') {
+            const screen = document.getElementById('adminTermScreen');
+            const div = document.createElement('div');
+            div.style.color = color;
+            div.style.marginTop = '4px';
+            div.style.whiteSpace = 'pre-wrap';
+            div.innerText = text;
+            screen.appendChild(div);
+            screen.scrollTop = screen.scrollHeight;
+        }
+
+        async function processAdminTermCommand(rawCmd) {
+            const cmd = rawCmd.trim();
+            const lower = cmd.toLowerCase();
+
+            if (lower === 'help') {
+                appendAdminTermLine(
+                    "Available Admin Directives:\n" +
+                    " - threads              : List all active visitor threads with message counts\n" +
+                    " - status               : Check live backend daemon, database and health status\n" +
+                    " - stats                : View total thread counts, specialist requests & metrics\n" +
+                    " - inspect <clientId>   : View recent chat log for a specific visitor\n" +
+                    " - reply <id> <text>    : Dispatch live specialist reply directly to visitor widget\n" +
+                    " - refresh              : Synchronize threads list from server daemon\n" +
+                    " - clear                : Clear terminal screen output\n" +
+                    " - exit / close         : Close backend terminal",
+                    '#f59e0b'
+                );
+            } else if (lower === 'status') {
+                appendAdminTermLine("[CONNECTING] Pinging /api/status daemon...", '#38bdf8');
+                try {
+                    const res = await fetch('/api/status');
+                    const data = await res.json();
+                    appendAdminTermLine(`[OK] Daemon: ${data.daemon}\n[OK] Database: ${data.database}\n[OK] Server Time: ${data.timestamp}\n[OK] Core Version: ${data.version}`, '#10b981');
+                } catch (e) {
+                    appendAdminTermLine(`[WARN] Status check failed: ${e.message}`, '#ef4444');
+                }
+            } else if (lower === 'threads') {
+                appendAdminTermLine("[CONNECTING] Querying /api/admin/threads...", '#38bdf8');
+                try {
+                    const res = await fetch('/api/admin/threads');
+                    const data = await res.json();
+                    if (data.status === 'success' && data.threads && data.threads.length > 0) {
+                        appendAdminTermLine(`Found ${data.threads.length} active customer threads:`, '#10b981');
+                        data.threads.forEach(t => {
+                            const isWaiting = t.status === 'waiting_specialist';
+                            const tagColor = isWaiting ? '#ef4444' : '#38bdf8';
+                            appendAdminTermLine(`• [${t.id}] ${t.clientName} | Status: ${(t.status || '').toUpperCase()} | Mode: ${t.mode} | Msgs: ${t.messageCount}`, tagColor);
+                            appendAdminTermLine(`   Latest: "${(t.lastMessageText || '').slice(0, 80)}"`, '#94a3b8');
+                        });
+                    } else {
+                        appendAdminTermLine("No active visitor threads found.", '#94a3b8');
+                    }
+                } catch (e) {
+                    appendAdminTermLine(`Query failed: ${e.message}`, '#ef4444');
+                }
+            } else if (lower === 'stats') {
+                const total = allThreads.length;
+                const waiting = allThreads.filter(t => t.status === 'waiting_specialist').length;
+                const active = allThreads.filter(t => t.status === 'active').length;
+                const resolved = allThreads.filter(t => t.status === 'resolved').length;
+                appendAdminTermLine(
+                    `--- LIVE CHAT TELEMETRY STATS ---\n` +
+                    `Total Inquiries Logged: ${total}\n` +
+                    `Needs Specialist Action: ${waiting}\n` +
+                    `Active Ongoing Sessions : ${active}\n` +
+                    `Resolved Inquiries      : ${resolved}\n` +
+                    `Auto-Sync Interval      : 3000ms`,
+                    '#38bdf8'
+                );
+            } else if (lower.startsWith('inspect ')) {
+                const clientId = cmd.split(' ')[1];
+                if (!clientId) {
+                    appendAdminTermLine("Usage: inspect <clientId>", '#ef4444');
+                    return;
+                }
+                appendAdminTermLine(`[QUERY] Fetching messages for ${clientId}...`, '#38bdf8');
+                try {
+                    const res = await fetch(`/api/admin/thread/${encodeURIComponent(clientId)}`);
+                    const data = await res.json();
+                    if (data.status === 'success' && data.messages) {
+                        appendAdminTermLine(`Messages transcript for [${clientId}]:`, '#10b981');
+                        data.messages.forEach(m => {
+                            appendAdminTermLine(`  [${m.sender.toUpperCase()}]: ${m.text}`, m.sender === 'admin' ? '#38bdf8' : (m.sender === 'user' ? '#f1f5f9' : '#f59e0b'));
+                        });
+                    } else {
+                        appendAdminTermLine(`No messages found for ${clientId}`, '#94a3b8');
+                    }
+                } catch (e) {
+                    appendAdminTermLine(`Failed to inspect thread: ${e.message}`, '#ef4444');
+                }
+            } else if (lower.startsWith('reply ')) {
+                const parts = cmd.split(' ');
+                const clientId = parts[1];
+                const replyText = parts.slice(2).join(' ');
+                if (!clientId || !replyText) {
+                    appendAdminTermLine("Usage: reply <clientId> <your reply text>", '#ef4444');
+                    return;
+                }
+                appendAdminTermLine(`[DISPATCH] Sending reply to ${clientId}...`, '#38bdf8');
+                try {
+                    const res = await fetch('/api/admin/reply', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ clientId, text: replyText })
+                    });
+                    const data = await res.json();
+                    if (data.status === 'success') {
+                        appendAdminTermLine(`[SUCCESS] Admin reply dispatched to visitor widget [${clientId}]`, '#10b981');
+                        fetchThreads();
+                        if (selectedClientId === clientId) loadThreadMessages(clientId, true);
+                    } else {
+                        appendAdminTermLine(`[ERROR] Dispatch failed: ${data.message || 'unknown'}`, '#ef4444');
+                    }
+                } catch (e) {
+                    appendAdminTermLine(`[ERROR] Network error: ${e.message}`, '#ef4444');
+                }
+            } else if (lower === 'refresh') {
+                fetchThreads(true);
+                appendAdminTermLine("[OK] Threads re-synchronized from backend daemon.", '#10b981');
+            } else if (lower === 'clear') {
+                document.getElementById('adminTermScreen').innerHTML = '';
+            } else if (lower === 'exit' || lower === 'close') {
+                toggleAdminTerminal();
+            } else {
+                appendAdminTermLine(`Directive not recognized: '${cmd}'. Type 'help' for commands.`, '#ef4444');
+            }
+        }
+    </script>
+
+    <!-- Embedded Backend Terminal Overlay for Admin Console -->
+    <div class="embedded-terminal-overlay" id="adminTerminalOverlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100000; justify-content: center; align-items: center; backdrop-filter: blur(6px);">
+        <div class="terminal-box" style="width: 880px; max-width: 95vw; height: 560px; background: #0c1017; border: 1px solid #38bdf8; border-radius: 8px; display: flex; flex-direction: column; box-shadow: 0 25px 60px rgba(0,0,0,0.9); overflow: hidden;">
+            <div class="terminal-top" style="background: #161f2c; padding: 0.85rem 1.25rem; display: flex; justify-content: space-between; align-items: center; color: #38bdf8; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; border-bottom: 1px solid #1e293b;">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
+                    [ADMIN_LIVE_TERMINAL] LIVE AGENT CHAT BACKEND DAEMON // US-EAST-2
+                </span>
+                <span style="cursor: pointer; color: #ef4444; font-weight: bold;" onclick="toggleAdminTerminal()">[CLOSE ✕]</span>
+            </div>
+            <div class="terminal-screen" id="adminTermScreen" style="flex: 1; padding: 1.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #10b981; overflow-y: auto; background: #05070a; line-height: 1.6;">
+                <div>[SYSTEM] Primero Srv Admin Live Agent Chat Backend Terminal initialized.</div>
+                <div style="color: #38bdf8; margin-top: 4px;">----------------------------------------------------------------</div>
+                <div style="color: #cbd5e1;">Connected to: /api/admin/* and /api/chat/* Daemon Relay.</div>
+                <div style="color: #94a3b8; margin-top: 4px;">Type <strong style="color: #f59e0b;">'help'</strong> to view available terminal directives.</div>
+            </div>
+            <div class="terminal-prompt-row" style="display: flex; background: #0c1017; padding: 0.8rem 1rem; border-top: 1px solid #1e293b; font-family: 'JetBrains Mono', monospace;">
+                <span style="color: #38bdf8; margin-right: 8px; font-weight: bold;">admin@sovereign-daemon:~$</span>
+                <input type="text" id="adminTermInput" placeholder="Enter directive (e.g. 'threads', 'status', 'reply <id> <text>', 'stats')..." style="flex: 1; background: transparent; border: none; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; outline: none;" onkeypress="handleAdminTermPress(event)">
+            </div>
+        </div>
+    </div>
+    </script>
+</body>
+</html>
